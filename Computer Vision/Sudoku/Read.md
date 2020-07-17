@@ -1,0 +1,1 @@
+The "sudoku" file is code for a sudoku solver which uses backtracking to come to the right solution. Next steps are to use opencv and a number of other things to be able to figure out the answer to any sudoku. Overall this was really fun to do and I learned about the backtracking algorithm!
