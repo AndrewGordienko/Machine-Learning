@@ -62,8 +62,8 @@ def a_star():
     while True:
         value = float("inf")
         for i in range(len(nodes_not_visited)):
-            if nodes_not_visited[i].h_cost < value:
-                value = nodes_not_visited[i].h_cost
+            if nodes_not_visited[i].f_cost <= value:
+                value = nodes_not_visited[i].f_cost
                 current = nodes_not_visited[i]
                 temp = i
         
@@ -78,8 +78,9 @@ def a_star():
         children = []
         for vec in product([-1, 0, 1], repeat=2):
             search_x, search_y = current.x_coordinate + vec[0], current.y_coordinate + vec[1]
-            if search_x >= DIMENSION or search_x < 0 or search_y >= DIMENSION or search_y < 0: 
+            if search_x >= WIDTH/DIMENSION or search_x < 0 or search_y >= HEIGHT/DIMENSION or search_y < 0: 
                 continue
+            # 1 is wall, 2 is start
             if board[search_y][search_x] != 1 and board[search_y][search_x] != 2:
                 new_node = Node(current)
                 new_node.x_coordinate, new_node.y_coordinate = search_x, search_y
@@ -200,11 +201,3 @@ while True:
                 pygame.draw.rect(screen, BLACK, (DIMENSION * row, DIMENSION * column, 50, 50), 1)
 
     pygame.display.flip()
-
-
-
-        
-
-
-
-
