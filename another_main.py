@@ -1,3 +1,10 @@
+# left shift + click to set the starting spot - only 1!
+# left shift + click on a starting spot already selected to remove it
+# left control + click to set end spot - same double click feature
+# regular click to set wall
+# hit space bar to let it run
+# need to tidy the code up still
+
 import numpy as np
 import pygame
 import math
