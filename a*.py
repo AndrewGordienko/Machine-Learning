@@ -58,7 +58,6 @@ def a_star():
     starting_node.x_coordinate, starting_node.y_coordinate = STARTING_COORDINATE_X, STARTING_COORDINATE_Y
 
     nodes_not_visited.append(starting_node)
-
     while True:
         value = float("inf")
         for i in range(len(nodes_not_visited)):
@@ -77,7 +76,7 @@ def a_star():
         
         children = []
         for vec in product([-1, 0, 1], repeat=2):
-            search_x, search_y = current.x_coordinate + vec[0], current.y_coordinate + vec[1]
+            search_x, search_y = current.x_coordinate + vec[1], current.y_coordinate + vec[0]
             if search_x >= WIDTH/DIMENSION or search_x < 0 or search_y >= HEIGHT/DIMENSION or search_y < 0: 
                 continue
             # 1 is wall, 2 is start
@@ -91,7 +90,7 @@ def a_star():
                 continue
                 
             child.g_cost = current.g_cost + COST
-            child.h_cost = (((child.x_coordinate - ENDING_COORDINATE_X)**2) + 
+            child.h_cost = math.sqrt(((child.x_coordinate - ENDING_COORDINATE_X)**2) + 
             ((child.y_coordinate - ENDING_COORDINATE_Y) ** 2))
             child.f_cost = child.g_cost + child.h_cost
 
