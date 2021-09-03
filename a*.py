@@ -4,7 +4,6 @@
 # regular click to set wall
 # hit space bar to let it run
 # need to tidy the code up still
-# in some rare cases it takes a while to get to the end, but after a max of 5 minutes it gets there :)
 
 import numpy as np
 import pygame
@@ -32,9 +31,6 @@ board = np.zeros((DIMENSION, DIMENSION))
 placeholder = 0
 enter_toggle = 0
 
-nodes_not_visited = []
-nodes_visited = []
-
 class Node():
     def __init__(self, parent_node):
         self.g_cost = None
@@ -43,6 +39,12 @@ class Node():
 
         self.x_coordinate, self.y_coordinate = None, None
         self.parent_node = parent_node
+        """
+        def __eq__(self, other):
+            return self.position == other.position
+        def __lt__(self, other):
+            return self.f < other.f
+        """
 
 
 def finding_position(arr, number):
@@ -58,8 +60,11 @@ def a_star():
     starting_node = Node(None)
     starting_node.g_cost = starting_node.f_cost = starting_node.h_cost = 0
     starting_node.x_coordinate, starting_node.y_coordinate = STARTING_COORDINATE_X, STARTING_COORDINATE_Y
+    nodes_not_visited = []
+    nodes_visited = []
 
     nodes_not_visited.append(starting_node)
+
     while True:
         step_counter += 1
         value = float("inf")
@@ -71,6 +76,17 @@ def a_star():
         
         nodes_not_visited.pop(temp)
         nodes_visited.append(current)
+        
+        temp_list = []
+        for a_node in nodes_visited:
+            value = 0
+            for i in range(len(temp_list)):
+                if temp_list[i].x_coordinate == a_node.x_coordinate and temp_list[i].y_coordinate == a_node.y_coordinate:
+                    value = 1
+            if value == 0:
+                temp_list.append(a_node)
+        
+        nodes_visited = temp_list
 
         print(current.x_coordinate, current.y_coordinate)
 
@@ -107,6 +123,17 @@ def a_star():
                 else:
                     nodes_not_visited.append(child)
 
+                    temp_list = []
+                    for a_node in nodes_not_visited:
+                        value = 0
+                        for i in range(len(temp_list)):
+                            if temp_list[i].x_coordinate == a_node.x_coordinate and temp_list[i].y_coordinate == a_node.y_coordinate:
+                                value = 1
+                        if value == 0:
+                            temp_list.append(a_node)
+                    
+                    nodes_not_visited = temp_list
+
     path = []
     while current.parent_node != None:
         path.append((current.x_coordinate, current.y_coordinate))
@@ -114,7 +141,7 @@ def a_star():
 
     path.pop(0)
     print(path)
-    print(step_counter)
+
 
     for i in range(len(path)):
         board[path[i][1]][path[i][0]] = 4
