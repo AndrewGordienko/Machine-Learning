@@ -4,6 +4,7 @@
 # regular click to set wall
 # hit space bar to let it run
 # need to tidy the code up still
+# in some rare cases it takes a while to get to the end, but after a max of 5 minutes it gets there :)
 
 import numpy as np
 import pygame
@@ -53,12 +54,14 @@ def finding_position(arr, number):
     return None, None
 
 def a_star():
+    step_counter = 0
     starting_node = Node(None)
     starting_node.g_cost = starting_node.f_cost = starting_node.h_cost = 0
     starting_node.x_coordinate, starting_node.y_coordinate = STARTING_COORDINATE_X, STARTING_COORDINATE_Y
 
     nodes_not_visited.append(starting_node)
     while True:
+        step_counter += 1
         value = float("inf")
         for i in range(len(nodes_not_visited)):
             if nodes_not_visited[i].f_cost <= value:
@@ -66,38 +69,43 @@ def a_star():
                 current = nodes_not_visited[i]
                 temp = i
         
+        nodes_not_visited.pop(temp)
         nodes_visited.append(current)
-        del nodes_not_visited[temp]
+
+        print(current.x_coordinate, current.y_coordinate)
 
         if (current.x_coordinate, current.y_coordinate) == (ENDING_COORDINATE_X, ENDING_COORDINATE_Y):
             print("end")
             break
             
-        
         children = []
         for vec in product([-1, 0, 1], repeat=2):
+            if not any(vec):
+                continue
+
             search_x, search_y = current.x_coordinate + vec[1], current.y_coordinate + vec[0]
             if search_x >= WIDTH/DIMENSION or search_x < 0 or search_y >= HEIGHT/DIMENSION or search_y < 0: 
                 continue
             # 1 is wall, 2 is start
-            if board[search_y][search_x] != 1 and board[search_y][search_x] != 2:
+            if board[search_y][search_x] != 1:
                 new_node = Node(current)
                 new_node.x_coordinate, new_node.y_coordinate = search_x, search_y
                 children.append(new_node)
         
         for child in (children):
-            if len([visited_child for visited_child in nodes_visited if visited_child == child]) > 0:
-                continue
-                
-            child.g_cost = current.g_cost + COST
-            child.h_cost = math.sqrt(((child.x_coordinate - ENDING_COORDINATE_X)**2) + 
-            ((child.y_coordinate - ENDING_COORDINATE_Y) ** 2))
-            child.f_cost = child.g_cost + child.h_cost
+            for closed_child in range(len(nodes_visited)):
+                if child == nodes_visited[closed_child]:
+                    break
+            else:
+                child.g_cost = current.g_cost + COST
+                child.h_cost = abs(child.y_coordinate - ENDING_COORDINATE_Y) + abs(child.x_coordinate - ENDING_COORDINATE_X)
+                child.f_cost = child.g_cost + child.h_cost
 
-            if len([i for i in nodes_not_visited if child == i and child.g_cost > i.g_cost]) > 0:
-                continue
-
-            nodes_not_visited.append(child)
+                for open_node in range(len(nodes_not_visited)):
+                    if child == nodes_not_visited[open_node] and child.g_cost >= nodes_not_visited[open_node].g_cost:
+                        break
+                else:
+                    nodes_not_visited.append(child)
 
     path = []
     while current.parent_node != None:
@@ -106,6 +114,7 @@ def a_star():
 
     path.pop(0)
     print(path)
+    print(step_counter)
 
     for i in range(len(path)):
         board[path[i][1]][path[i][0]] = 4
@@ -142,7 +151,13 @@ while True:
                     STARTING_COORDINATE_X, STARTING_COORDINATE_Y = finding_position(board, 2)
                     ENDING_COORDINATE_X, ENDING_COORDINATE_Y = finding_position(board, 3)
 
+                    board[STARTING_COORDINATE_Y][STARTING_COORDINATE_X] = 0
+                    board[ENDING_COORDINATE_Y][ENDING_COORDINATE_X] = 0
+
                     a_star()
+
+                    board[STARTING_COORDINATE_Y][STARTING_COORDINATE_X] = 2
+                    board[ENDING_COORDINATE_Y][ENDING_COORDINATE_X] = 3
                 
             if event.type == pygame.KEYUP:
                 placeholder = 0
