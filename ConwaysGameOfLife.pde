@@ -11,13 +11,6 @@ int myscreen = 600;
 int width = 30;
 int length = 30;
 int boxLength = myscreen/width;
-int x;
-int y;
-int lowerBoundX;
-int lowerBoundY;
-int upperBoundX;
-int upperBoundY;
-int counter;
 int[][] arr = new int[width][length];
 int[][] newArr = new int[width][length];
 
