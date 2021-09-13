@@ -85,7 +85,6 @@ void loop() {
           } else{
             newArr[i][j] = 0;
           }
-          System.out.println(alive);
       }
   }
 
