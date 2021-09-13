@@ -23,8 +23,6 @@ void setup(){
 
       } 
     }
-    System.out.println(arr);
-
 }
 
 void draw(){
